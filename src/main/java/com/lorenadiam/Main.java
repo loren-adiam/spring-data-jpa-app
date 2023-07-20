@@ -26,22 +26,25 @@ public class Main {
 
 		return args -> {
 
-			Student student = generateStudent(studentRepository); // not saving only generating
+			Student student1 = generateStudent(studentRepository); // not saving only generating
 
-			StudentIdCard studentIdCard = new StudentIdCard("123456789", student);
+			StudentIdCard studentIdCard = new StudentIdCard("123456789", student1);
 
-			student.addBook(new Book("Clean code", LocalDateTime.now().minusDays(4)));
-			student.addBook(new Book("Think and Grow Rich", LocalDateTime.now()));
-			student.addBook(new Book("Spring Data JPA", LocalDateTime.now().minusYears(1)));
+			// adding books through Student constructor which will be saved later too. addBook() is syncing the Student class too!
+			student1.addBook(new Book("Clean code", LocalDateTime.now().minusDays(4)));
+			student1.addBook(new Book("Think and Grow Rich", LocalDateTime.now()));
+			student1.addBook(new Book("Spring Data JPA", LocalDateTime.now().minusYears(1)));
 
-			student.setStudentIdCard(studentIdCard); // only setting studentIdCard, and later to be able to save it
+			// setting the id card on student1 to be able to save it (card) to db on the next step together with the student!
+			student1.setStudentIdCard(studentIdCard); // only setting studentIdCard, and later to be able to save it
 
-			studentRepository.save(student); // saving student, also studentIdCard and now Books too!
+			studentRepository.save(student1); // saving student, also studentIdCard and now Books too!
+			// We are basically creating & saving all the data through the student object. Beside the actual student, we also set card and books.
 
 			studentRepository.findById(1L) // testing BIDirectional relationship. It will add JOIN to student id card!
-					.ifPresent(s -> {
-						System.out.println("Fetch book lazy..."); // Books not loaded since FetchType is LAZY!
-						List<Book> books = student.getBooks();// This is how we force it to load the Books too from db!
+					.ifPresent(s -> { // Student Card is loaded automatically since FetchType is EAGER for 121.
+						System.out.println("Fetch book lazy..."); // Books not loaded since FetchType is LAZY for 12M/M21!
+						List<Book> books = student1.getBooks();// This is how we force it to load the Books too from db!
 						books.forEach(book -> { // or we put FetchType to EAGER.
 							System.out.println(s.getFirstName() + " borrowed " + book.getBookName());
 						});
@@ -49,7 +52,7 @@ public class Main {
 
 //			studentIdCardRepository.findById(1L) // this is to see in logs how hibernate did left join
 //					.ifPresent(System.out::println); // toString() showing both Student and StudentIdCard data!
-//			studentRepository.deleteById(1L); // this will delete both Student and StudentIdCard entities
+//			studentRepository.deleteById(1L); // Testing Orphan removal. It will delete both Student and StudentIdCard entities
 
 //			generateAndSaveRandomStudents(studentRepository);
 			// Paging examples. Return 5 students per page example
