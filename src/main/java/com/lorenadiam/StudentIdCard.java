@@ -37,8 +37,8 @@ public class StudentIdCard {
     // Configuring Foreign KEY to Student class
     @OneToOne(
             cascade = CascadeType.ALL, // ALL/PERSIST is allowing us to save the child entity "Student" when we save the card.
-            fetch = FetchType.EAGER) // FetchType for "121" is by default EAGER (loads both owner and child when fetching data), LAZY only loads owner!
-    // This is ok for "121", but when we have "12Many" or "Many2Many" default is: LAZY
+            fetch = FetchType.EAGER) // Default FetchType for "121" is EAGER (when fetching data (findById) it loads both owner and child), LAZY only loads owner!
+    // This is ok for "121", but when we have "12Many" or "Many2Many" default is: LAZY to avoid loading too much unnecessary data
     // ALL (includes all types below!), PersistenceContext 1st level cash between app and db, Owning entity: StudentIdCard, child: Student
     // PERSIST (This is when we save entity) It saves both owning and child entity!!!. This example here.
     // MERGE (coping the entity to the PersistenceContext)
@@ -46,10 +46,10 @@ public class StudentIdCard {
     // REFRESH (get entity again from the database)
     // DETACH (the child will also get removed from the PersistenceContext) ;
     // We should never set orphanRemoval here since it doesn't make sense to delete "Student" when deleting "StudentIdCard"!
-    @JoinColumn(
+    @JoinColumn( // we are adding this only in tables which have FK! Owner table without FK don't need this annotation!
             name = "student_id", // name of this Foreign KEY column inside student_id_card table
             referencedColumnName = "id", // this is "id" from Student class
-            foreignKey = @ForeignKey(name = "student_id_fk")) // This is how to modify default foreignKey constraint name!
+            foreignKey = @ForeignKey(name = "student_id_fk")) // (Best practice) This is how to modify WEIRD LONG default foreignKey constraint name!
 
     // This is an actual Foreign KEY property! Not classic Long or Int property as we would expect.
     // It is a Student class field since it connects to that class.

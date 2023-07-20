@@ -39,8 +39,8 @@ public class Main {
 			studentRepository.save(student); // saving student, also studentIdCard and now Books too!
 
 			studentRepository.findById(1L) // testing BIDirectional relationship. It will add JOIN to student id card!
-					.ifPresent(s -> {
-						System.out.println("Fetch book lazy..."); // Books not loaded since FetchType is LAZY!
+					.ifPresent(s -> { // Student Card is loaded automatically since FetchType is EAGER for 121.
+						System.out.println("Fetch book lazy..."); // Books not loaded since FetchType is LAZY for 12M/M21!
 						List<Book> books = student.getBooks();// This is how we force it to load the Books too from db!
 						books.forEach(book -> { // or we put FetchType to EAGER.
 							System.out.println(s.getFirstName() + " borrowed " + book.getBookName());
@@ -49,7 +49,7 @@ public class Main {
 
 //			studentIdCardRepository.findById(1L) // this is to see in logs how hibernate did left join
 //					.ifPresent(System.out::println); // toString() showing both Student and StudentIdCard data!
-//			studentRepository.deleteById(1L); // this will delete both Student and StudentIdCard entities
+//			studentRepository.deleteById(1L); // Testing Orphan removal. It will delete both Student and StudentIdCard entities
 
 //			generateAndSaveRandomStudents(studentRepository);
 			// Paging examples. Return 5 students per page example
