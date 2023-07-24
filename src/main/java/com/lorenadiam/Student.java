@@ -5,6 +5,12 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "Student") // Default (class name). This annotation is used to map this class to table.
 // Good practice to have "name" specified to have full control. E.g. long class name, but entity name different.
+@Table( // similar to @Column for fields, here we want to take control over table
+    name = "student",
+    uniqueConstraints = { // This is to take control of the unique email constraint name if we want!
+            @UniqueConstraint(name = "student_email_unique", columnNames = "email")
+    }
+)
 public class Student {
 
     @Id
