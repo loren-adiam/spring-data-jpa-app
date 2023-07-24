@@ -1,12 +1,23 @@
 package com.lorenadiam;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 
-@Entity(name = "Student") // This annotation is used to map this class to table. Good practice to have "name" specified.
+import static jakarta.persistence.GenerationType.SEQUENCE;
+
+@Entity(name = "Student") // Default (class name). This annotation is used to map this class to table.
+// Good practice to have "name" specified to have full control. E.g. long class name, but entity name different.
 public class Student {
 
     @Id
+    @SequenceGenerator( // Id is backed by SEQUENCE which is the same as BIG SERIAL data type!
+            name = "student_sequence",
+            sequenceName = "student_sequence",
+            allocationSize = 1 // how much will sequence increase. (default 50)
+    )
+    @GeneratedValue( // We have to specify this. This means like now we want this to be generated based of the sequence
+            strategy = SEQUENCE,
+            generator = "student_sequence" // this is defined above in sequence
+    )
     private Long id;
     private String firstName;
     private String lastName;
