@@ -1,7 +1,6 @@
 package com.lorenadiam;
 
 import jakarta.persistence.*;
-
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Entity(name = "Student") // Default (class name). This annotation is used to map this class to table.
@@ -18,10 +17,35 @@ public class Student {
             strategy = SEQUENCE,
             generator = "student_sequence" // this is defined above in sequence
     )
+    @Column(
+            name = "id",
+            updatable = false // we don't want anyone to be able to update this
+    )
     private Long id;
+
+    @Column(
+            name = "first_name", // this way we have full control of column name in database!
+            nullable = false, // can't be NULL value!
+            columnDefinition = "TEXT" // it was varchar(255) by default, and we changed it to TEXT
+    )
     private String firstName;
+
+    @Column(
+            name = "last_name",
+            nullable = false,
+            columnDefinition = "TEXT"
+    )
     private String lastName;
+
+    @Column(
+            name = "email",
+            nullable = false,
+            columnDefinition = "TEXT",
+            unique = true // we want email to be unique for each student!
+    )
     private String email;
+
+    @Column(name = "age", nullable = false)
     private Integer age;
 
     public Student(Long id, String firstName, String lastName, String email, Integer age) {
