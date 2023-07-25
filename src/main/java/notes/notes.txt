@@ -1,0 +1,11 @@
+StudentRepository class
+
+- The goal of Spring Data repository abstraction is to significantly reduce the amount of boilerplate code
+required to implement data access layers for various persistence stores.
+
+- (simplified) Repository is simply a "data access layer" and the goal is to abstract everything which reduces the amount of
+boilerplate code required to implement data access layers.
+
+- CRUD operations are done in this layer
+
+- OurRepository -> extends JPARepository(jpa methods, flush and batch) -> extends PagingAndSortingRepository -> extends CrudRepository
