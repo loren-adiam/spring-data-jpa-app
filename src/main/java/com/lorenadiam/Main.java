@@ -49,18 +49,37 @@ public class Main {
 			System.out.println("\nNew count: " + studentRepository.count());*/
 
 			// Second code
-			System.out.println("\nFirst query");
+			System.out.println("\nFirst JPQL query");
 			studentRepository
 					.findStudentByEmail("nerol-karic@gmail.com")
 					.ifPresentOrElse(
 							System.out::println,
 							() -> System.out.println("Student with this email not found!"));
 
-			System.out.println("\nSecond query");
+			System.out.println("\nSecond JPQL query");
 			studentRepository
 					.findStudentsByFirstNameEqualsAndAgeGreaterThan("Maida", 22)
 					.forEach(System.out::println);
 
+			System.out.println("\nThird Native query");
+			studentRepository
+					.findStudentsByFirstNameEqualsAndAgeGreaterThanNative("Maida", 22)
+					.forEach(System.out::println);
+
+			System.out.println("\nThird Native query with different param setup");
+			studentRepository
+					.testDifferentParamLogic("Maida", 24)
+					.forEach(System.out::println);
+
+			System.out.println("\nFourth JPQL Delete query");
+			int countDeletedStudents = studentRepository
+					.deleteStudentById(3L);
+			System.out.println("Deleted Students Count: " + countDeletedStudents);
+
+			System.out.println("\nFifth JPQL Update query");
+			int rowsAffected = studentRepository
+					.updateStudentById("Maja", 2L);
+			System.out.println("Rows affected: " + rowsAffected);
 		};
 	}
 
