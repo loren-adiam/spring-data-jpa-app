@@ -18,13 +18,14 @@ public class Main {
 		return args -> {
 			Student maida = new Student("Maida", "Karic", "maida-karic@gmail.com",32);
 			Student nerol = new Student("Nerol", "Karic", "nerol-karic@gmail.com",30);
+			Student maida2 = new Student("Maida", "Topcagic", "maida-topcagic@gmail.com",25);
 			//studentRepository.save(maida);
 
 			System.out.println("\nAdding Maida and Nerol");
-			studentRepository.saveAll(List.of(maida, nerol));
+			studentRepository.saveAll(List.of(maida, nerol, maida2));
 
-			System.out.println("\nStudents count: " + studentRepository.count());
-
+			// First code
+			/*System.out.println("\nStudents count: " + studentRepository.count());
 
 			studentRepository
 					.findById(2L)
@@ -45,8 +46,44 @@ public class Main {
 			System.out.println("\nDelete student with id: 1");
 			studentRepository.deleteById(1L);
 
-			System.out.println("\nNew count: " + studentRepository.count());
+			System.out.println("\nNew count: " + studentRepository.count());*/
 
+			// Second code
+			System.out.println("\nFirst JPQL query");
+			studentRepository
+					.findStudentByEmail("nerol-karic@gmail.com")
+					.ifPresentOrElse(
+							System.out::println,
+							() -> System.out.println("Student with this email not found!"));
+
+			System.out.println("\nSecond JPQL query");
+			studentRepository
+					.findStudentsByFirstNameEqualsAndAgeGreaterThan("Maida", 22)
+					.forEach(System.out::println);
+
+			System.out.println("\nThird Native query");
+			studentRepository
+					.findStudentsByFirstNameEqualsAndAgeGreaterThanNative("Maida", 22)
+					.forEach(System.out::println);
+
+			System.out.println("\nThird Native query with different param setup");
+			studentRepository
+					.testDifferentParamLogic("Maida", 24)
+					.forEach(System.out::println);
+
+			System.out.println("\nFourth JPQL Delete query");
+			int countDeletedStudents = studentRepository
+					.deleteStudentById(3L);
+			System.out.println("Deleted Students Count: " + countDeletedStudents);
+
+			System.out.println("\nFifth JPQL Update query");
+			int rowsAffected = studentRepository
+					.updateStudentById("Maja", 2L);
+			System.out.println("Rows affected: " + rowsAffected);
 		};
 	}
+
+
+
+
 }
