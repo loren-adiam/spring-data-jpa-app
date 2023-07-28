@@ -5,7 +5,7 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
-import java.util.List;
+import org.springframework.data.domain.Sort;
 
 @SpringBootApplication
 public class Main {
@@ -18,17 +18,18 @@ public class Main {
 	CommandLineRunner commandLineRunner(StudentRepository studentRepository) {
 		return args -> {
 
-			Faker faker = new Faker();
-			for (int i = 0; i < 20; i++) {
-				String firstName = faker.name().firstName();
-				String lastName = faker.name().lastName();
-				String email = String.format("%s.%s@gmail.com", firstName.toLowerCase(), lastName.toLowerCase());
-				int age = faker.number().numberBetween(17, 55);
+			generateRandomStudents(studentRepository);
 
-				Student student = new Student(firstName, lastName, email, age);
-				studentRepository.save(student);
+			// sorting on First Name
+			Sort firstSort = Sort.by(Sort.Direction.ASC, "firstName");
+			studentRepository.findAll(firstSort) // findAll() takes Sort objects
+					.forEach(student -> System.out.println(student.getFirstName()));
 
-			}
+			// sorting on First Name and Age (difference approach)
+			Sort secondSort = Sort.by("firstName").ascending().and(Sort.by("age")).descending();
+			studentRepository.findAll(secondSort).forEach(
+					student -> System.out.println(student.getFirstName() + ", " + student.getAge())
+			);
 
 
 			// Fake Data
@@ -98,7 +99,18 @@ public class Main {
 		};
 	}
 
+	private static void generateRandomStudents(StudentRepository studentRepository) {
+		Faker faker = new Faker();
+		for (int i = 0; i < 20; i++) {
+			String firstName = faker.name().firstName();
+			String lastName = faker.name().lastName();
+			String email = String.format("%s.%s@gmail.com", firstName.toLowerCase(), lastName.toLowerCase());
+			int age = faker.number().numberBetween(17, 55);
 
+			Student student = new Student(firstName, lastName, email, age);
+			studentRepository.save(student);
+		}
+	}
 
 
 }
