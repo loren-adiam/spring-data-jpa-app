@@ -1,5 +1,6 @@
 package com.lorenadiam;
 
+import com.github.javafaker.Faker;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -16,13 +17,27 @@ public class Main {
 	@Bean
 	CommandLineRunner commandLineRunner(StudentRepository studentRepository) {
 		return args -> {
-			Student maida = new Student("Maida", "Karic", "maida-karic@gmail.com",32);
+
+			Faker faker = new Faker();
+			for (int i = 0; i < 20; i++) {
+				String firstName = faker.name().firstName();
+				String lastName = faker.name().lastName();
+				String email = String.format("%s.%s@gmail.com", firstName.toLowerCase(), lastName.toLowerCase());
+				int age = faker.number().numberBetween(17, 55);
+
+				Student student = new Student(firstName, lastName, email, age);
+				studentRepository.save(student);
+
+			}
+
+
+			// Fake Data
+			/*Student maida = new Student("Maida", "Karic", "maida-karic@gmail.com",32);
 			Student nerol = new Student("Nerol", "Karic", "nerol-karic@gmail.com",30);
 			Student maida2 = new Student("Maida", "Topcagic", "maida-topcagic@gmail.com",25);
 			//studentRepository.save(maida);
-
 			System.out.println("\nAdding Maida and Nerol");
-			studentRepository.saveAll(List.of(maida, nerol, maida2));
+			studentRepository.saveAll(List.of(maida, nerol, maida2));*/
 
 			// First code
 			/*System.out.println("\nStudents count: " + studentRepository.count());
@@ -49,7 +64,7 @@ public class Main {
 			System.out.println("\nNew count: " + studentRepository.count());*/
 
 			// Second code
-			System.out.println("\nFirst JPQL query");
+			/*System.out.println("\nFirst JPQL query");
 			studentRepository
 					.findStudentByEmail("nerol-karic@gmail.com")
 					.ifPresentOrElse(
@@ -79,7 +94,7 @@ public class Main {
 			System.out.println("\nFifth JPQL Update query");
 			int rowsAffected = studentRepository
 					.updateStudentById("Maja", 2L);
-			System.out.println("Rows affected: " + rowsAffected);
+			System.out.println("Rows affected: " + rowsAffected);*/
 		};
 	}
 
