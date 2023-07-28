@@ -23,7 +23,7 @@ public class Main {
 			generateRandomStudents(studentRepository);
 
 			// Paging examples. Return 5 students per page example
-			pagingExamples(studentRepository);
+			//pagingExamples(studentRepository);
 
 			// sorting on First Name
 			//sortingExamples(studentRepository);

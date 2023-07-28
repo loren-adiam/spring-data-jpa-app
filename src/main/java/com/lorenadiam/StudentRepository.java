@@ -9,6 +9,7 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
+// interface doesn't need annotation, but if we would have multiple class implementations they would need @Repository
 public interface StudentRepository extends JpaRepository<Student, Long> {
     // This is how we can create custom SQL queries with help of these "methods" (chaining) from Spring Data JPA. findStudentBy + Email
     // We can use annotation @Query to allow us to write "JPQL" (java persistence query language) queries and "NATIVE" queries.
