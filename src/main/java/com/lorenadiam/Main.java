@@ -12,22 +12,30 @@ import org.springframework.data.domain.Sort;
 @SpringBootApplication
 public class Main {
 
+	private static final Faker faker = new Faker();
+
 	public static void main(String[] args) {
 		SpringApplication.run(Main.class, args);
 	}
 
 	@Bean
-	CommandLineRunner commandLineRunner(StudentRepository studentRepository) {
+	CommandLineRunner commandLineRunner(
+			StudentRepository studentRepository,
+			StudentIdCardRepository studentIdCardRepository) {
+
 		return args -> {
 
-			generateRandomStudents(studentRepository);
+			Student student = generateStudent(studentRepository); // not saving only generating
 
+			StudentIdCard studentIdCard = new StudentIdCard("123456789", student);
+			studentIdCardRepository.save(studentIdCard); // saving both student and studentIdCard at the same time?
+
+			//generateAndSaveRandomStudents(studentRepository);
 			// Paging examples. Return 5 students per page example
 			//pagingExamples(studentRepository);
 
 			// sorting on First Name
 			//sortingExamples(studentRepository);
-
 
 			// Fake Data
 			/*Student maida = new Student("Maida", "Karic", "maida-karic@gmail.com",32);
@@ -117,17 +125,23 @@ public class Main {
 		);
 	}
 
-	private static void generateRandomStudents(StudentRepository studentRepository) {
-		Faker faker = new Faker();
+	private static void generateAndSaveRandomStudents(StudentRepository studentRepository) {
 		for (int i = 0; i < 20; i++) {
-			String firstName = faker.name().firstName();
-			String lastName = faker.name().lastName();
-			String email = String.format("%s.%s@gmail.com", firstName.toLowerCase(), lastName.toLowerCase());
-			int age = faker.number().numberBetween(17, 55);
-
-			Student student = new Student(firstName, lastName, email, age);
+			Student student = generateStudent(studentRepository);
 			studentRepository.save(student);
 		}
+	}
+
+	private static Student generateStudent(StudentRepository studentRepository) {
+		String firstName = faker.name().firstName();
+		String lastName = faker.name().lastName();
+		String email = String.format("%s.%s@gmail.com", firstName.toLowerCase(), lastName.toLowerCase());
+		int age = faker.number().numberBetween(17, 55);
+
+		Student student = new Student(firstName, lastName, email, age);
+//		studentRepository.save(student);
+
+		return student;
 	}
 
 

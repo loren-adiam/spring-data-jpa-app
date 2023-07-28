@@ -40,7 +40,7 @@ public class StudentIdCard {
     private String cardNumber;
 
     // Configuring Foreign KEY to Student class
-    @OneToOne(cascade = CascadeType.ALL)
+    @OneToOne(cascade = CascadeType.ALL) //???????
     @JoinColumn(
             name = "student_id", // name of this Foreign KEY column inside student_id_card table
             referencedColumnName = "id") // this is "id" from Student class
@@ -48,4 +48,8 @@ public class StudentIdCard {
     // It is a Student class field since it connects to that class.
     private Student student;
 
+    public StudentIdCard(String cardNumber, Student student) {
+        this.cardNumber = cardNumber;
+        this.student = student;
+    }
 }
