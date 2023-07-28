@@ -5,6 +5,8 @@ import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 
 @SpringBootApplication
@@ -20,16 +22,11 @@ public class Main {
 
 			generateRandomStudents(studentRepository);
 
-			// sorting on First Name
-			Sort firstSort = Sort.by(Sort.Direction.ASC, "firstName");
-			studentRepository.findAll(firstSort) // findAll() takes Sort objects
-					.forEach(student -> System.out.println(student.getFirstName()));
+			// Paging examples. Return 5 students per page example
+			pagingExamples(studentRepository);
 
-			// sorting on First Name and Age (difference approach)
-			Sort secondSort = Sort.by("firstName").ascending().and(Sort.by("age")).descending();
-			studentRepository.findAll(secondSort).forEach(
-					student -> System.out.println(student.getFirstName() + ", " + student.getAge())
-			);
+			// sorting on First Name
+			//sortingExamples(studentRepository);
 
 
 			// Fake Data
@@ -97,6 +94,27 @@ public class Main {
 					.updateStudentById("Maja", 2L);
 			System.out.println("Rows affected: " + rowsAffected);*/
 		};
+	}
+
+	private static void pagingExamples(StudentRepository studentRepository) {
+		PageRequest pageRequest = PageRequest.of(
+				0,
+				5, //  means 1st page, 5 is the limit the request to 5 students. (5 per page)
+				Sort.by("firstName").ascending()); // It is possible to add sorting too.
+		Page<Student> studentPage = studentRepository.findAll(pageRequest);
+		System.out.println(studentPage); // we can set break point here and debug to check the pages and so on...
+	}
+
+	private static void sortingExamples(StudentRepository studentRepository) {
+		Sort firstSort = Sort.by(Sort.Direction.ASC, "firstName");
+		studentRepository.findAll(firstSort) // findAll() takes Sort objects
+				.forEach(student -> System.out.println(student.getFirstName()));
+
+		// sorting on First Name and Age (difference approach)
+		Sort secondSort = Sort.by("firstName").ascending().and(Sort.by("age")).descending();
+		studentRepository.findAll(secondSort).forEach(
+				student -> System.out.println(student.getFirstName() + ", " + student.getAge())
+		);
 	}
 
 	private static void generateRandomStudents(StudentRepository studentRepository) {

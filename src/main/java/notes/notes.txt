@@ -9,3 +9,5 @@ boilerplate code required to implement data access layers.
 - CRUD operations are done in this layer
 
 - OurRepository -> extends JPARepository(jpa methods, flush and batch) -> extends PagingAndSortingRepository -> extends CrudRepository
+
+- Pagination is a feature that allows us to query a large data set without fetching everything at ones from database, but only few results at the time
