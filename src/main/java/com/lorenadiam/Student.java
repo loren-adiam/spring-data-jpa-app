@@ -3,6 +3,9 @@ package com.lorenadiam;
 import jakarta.persistence.*;
 import lombok.Getter;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
 @Getter
@@ -65,6 +68,14 @@ public class Student {
     )
     private StudentIdCard studentIdCard;
 
+    @OneToMany( // this is Bi-directional relationship
+            mappedBy = "student", // **student from Book class
+            orphanRemoval = true,
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE} // when we delete, we delete all children
+    )
+    private List<Book> books = new ArrayList<>(); // because this is one to many we need a list in student class!
+
+
     public Student(String firstName, String lastName, String email, Integer age) { // removed "id" since it is generated automatically!
         this.firstName = firstName;
         this.lastName = lastName;
@@ -94,6 +105,21 @@ public class Student {
 
     public void setAge(Integer age) {
         this.age = age;
+    }
+
+    public void addBook(Book book) {
+        if (!this.books.contains(book)) { // if it doesn't contain book
+            this.books.add(book);
+            // bidirectional, both ways in sync!
+            book.setStudent(this); // In "Student" we add a Book, and in other side we set the "Student" back
+        }
+    }
+
+    public void removeBook(Book book) {
+        if (this.books.contains(book)) {
+            this.books.remove(book);
+            book.setStudent(null);
+        }
     }
 
     @Override

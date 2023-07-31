@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
+import java.time.LocalDateTime;
 
 @SpringBootApplication
 public class Main {
@@ -21,7 +22,8 @@ public class Main {
 	@Bean
 	CommandLineRunner commandLineRunner(
 			StudentRepository studentRepository,
-			StudentIdCardRepository studentIdCardRepository) {
+			StudentIdCardRepository studentIdCardRepository,
+			BookRepository bookRepository) {
 
 		return args -> {
 
@@ -35,13 +37,12 @@ public class Main {
 
 			studentIdCardRepository.findById(1L) // this is to see in logs how hibernate did left join
 					.ifPresent(System.out::println); // toString() showing both Student and StudentIdCard data!
-
-			studentRepository.deleteById(1L); // this will delete both Student and StudentIdCard entities
+//			studentRepository.deleteById(1L); // this will delete both Student and StudentIdCard entities
 
 
 //			generateAndSaveRandomStudents(studentRepository);
 			// Paging examples. Return 5 students per page example
-			pagingExamples(studentRepository);
+//			pagingExamples(studentRepository);
 
 			// sorting on First Name
 //			sortingExamples(studentRepository);
