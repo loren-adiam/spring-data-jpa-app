@@ -1,14 +1,15 @@
 package com.lorenadiam;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.List;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
-@Getter
+@Data
+@NoArgsConstructor
 @Entity(name = "Student") // Default (class name). This annotation is used to map this class to table.
 // Good practice to have "name" specified to have full control. E.g. long class name, but entity name different.
 @Table( // similar to @Column for fields, here we want to take control over table
@@ -62,48 +63,27 @@ public class Student {
 
     @OneToOne( // this means when we load the student we also load the card and vice versa. Adding JOINS.
             mappedBy = "student", // this forms BI-Directional relationship where this "student" is the field found inside StudentIdCard class.
-            orphanRemoval = true // Default: false. When deleting entity with relationship this needs to be set to "true", otherwise it will NOT delete.
+            orphanRemoval = true, // Default: false. When deleting entity with relationship this needs to be set to "true", otherwise it will NOT delete.
             // When "true" it will delete both owner "Student" and child "StudentIdCard" entities. This should never be set on a child Entity!!!
             // ***IT DOESN'T MAKE SENSE TO HAVE orphanRemoval set to TRUE on a child (idCard) entity! When deleting "StudentIdCard" "Student" should not be deleted.
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE} // needed to not get error: save the instance before flushing
     )
     private StudentIdCard studentIdCard;
 
     @OneToMany( // this is Bi-directional relationship
             mappedBy = "student", // **student from Book class
-            orphanRemoval = true,
-            cascade = {CascadeType.PERSIST, CascadeType.REMOVE} // when we delete, we delete all children
+            orphanRemoval = true, // PERSIST. Because of this we don't need repo for Book it can be saved
+            cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, // when we delete, we delete all children
+            fetch = FetchType.LAZY // Default for 12Many: LAZY. When we change it to "EAGER" books will be loaded together with Student!
+            // Good to start with default, and check later. Think about performance if there are many books to load!
+            // If application needs extra books we can make a QUERY for it and call it when we need it instead of loading everything at ones!
     )
     private List<Book> books = new ArrayList<>(); // because this is one to many we need a list in student class!
-
 
     public Student(String firstName, String lastName, String email, Integer age) { // removed "id" since it is generated automatically!
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
-        this.age = age;
-    }
-
-    public Student() {
-
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
-
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
-
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public void setAge(Integer age) {
         this.age = age;
     }
 
@@ -122,14 +102,8 @@ public class Student {
         }
     }
 
-    @Override
-    public String toString() {
-        return "Student{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", age=" + age +
-                '}';
+    public void setStudentIdCard(StudentIdCard studentIdCard) {
+        this.studentIdCard = studentIdCard;
     }
+
 }

@@ -9,6 +9,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @SpringBootApplication
 public class Main {
@@ -21,24 +22,34 @@ public class Main {
 
 	@Bean
 	CommandLineRunner commandLineRunner(
-			StudentRepository studentRepository,
-			StudentIdCardRepository studentIdCardRepository,
-			BookRepository bookRepository) {
+			StudentRepository studentRepository) {
 
 		return args -> {
 
 			Student student = generateStudent(studentRepository); // not saving only generating
 
 			StudentIdCard studentIdCard = new StudentIdCard("123456789", student);
-			studentIdCardRepository.save(studentIdCard); // saving both student and studentIdCard
+
+			student.addBook(new Book("Clean code", LocalDateTime.now().minusDays(4)));
+			student.addBook(new Book("Think and Grow Rich", LocalDateTime.now()));
+			student.addBook(new Book("Spring Data JPA", LocalDateTime.now().minusYears(1)));
+
+			student.setStudentIdCard(studentIdCard); // only setting studentIdCard, and later to be able to save it
+
+			studentRepository.save(student); // saving student, also studentIdCard and now Books too!
 
 			studentRepository.findById(1L) // testing BIDirectional relationship. It will add JOIN to student id card!
-					.ifPresent(System.out::println);
+					.ifPresent(s -> {
+						System.out.println("Fetch book lazy..."); // Books not loaded since FetchType is LAZY!
+						List<Book> books = student.getBooks();// This is how we force it to load the Books too from db!
+						books.forEach(book -> { // or we put FetchType to EAGER.
+							System.out.println(s.getFirstName() + " borrowed " + book.getBookName());
+						});
+					});
 
-			studentIdCardRepository.findById(1L) // this is to see in logs how hibernate did left join
-					.ifPresent(System.out::println); // toString() showing both Student and StudentIdCard data!
+//			studentIdCardRepository.findById(1L) // this is to see in logs how hibernate did left join
+//					.ifPresent(System.out::println); // toString() showing both Student and StudentIdCard data!
 //			studentRepository.deleteById(1L); // this will delete both Student and StudentIdCard entities
-
 
 //			generateAndSaveRandomStudents(studentRepository);
 			// Paging examples. Return 5 students per page example
