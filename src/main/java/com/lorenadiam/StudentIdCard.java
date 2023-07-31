@@ -1,10 +1,7 @@
 package com.lorenadiam;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
@@ -12,6 +9,7 @@ import static jakarta.persistence.GenerationType.SEQUENCE;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 @Entity(
         name = "StudentIdCard")
 @Table(
@@ -40,7 +38,16 @@ public class StudentIdCard {
     private String cardNumber;
 
     // Configuring Foreign KEY to Student class
-    @OneToOne(cascade = CascadeType.ALL) //???????
+    @OneToOne(
+            cascade = CascadeType.ALL, // ALL/PERSIST is allowing us to save the child entity "Student" when we save the card.
+            fetch = FetchType.EAGER) // FetchType for "121" is by default EAGER (loads both owner and child when fetching data), LAZY only loads owner!
+    // This is ok for "121", but when we have "12Many" or "Many2Many" default is: LAZY
+    // ALL (includes all types below!), PersistenceContext 1st level cash between app and db, Owning entity: StudentIdCard, child: Student
+    // PERSIST (This is when we save entity) It saves both owning and child entity!!!. This example here.
+    // MERGE (coping the entity to the PersistenceContext)
+    // REMOVE (remove entity from db)
+    // REFRESH (get entity again from the database)
+    // DETACH (the child will also get removed from the PersistenceContext ;
     @JoinColumn(
             name = "student_id", // name of this Foreign KEY column inside student_id_card table
             referencedColumnName = "id") // this is "id" from Student class
@@ -48,7 +55,7 @@ public class StudentIdCard {
     // It is a Student class field since it connects to that class.
     private Student student;
 
-    public StudentIdCard(String cardNumber, Student student) {
+    public StudentIdCard(String cardNumber, Student student) { // constructor without "id"
         this.cardNumber = cardNumber;
         this.student = student;
     }

@@ -28,14 +28,18 @@ public class Main {
 			Student student = generateStudent(studentRepository); // not saving only generating
 
 			StudentIdCard studentIdCard = new StudentIdCard("123456789", student);
-			studentIdCardRepository.save(studentIdCard); // saving both student and studentIdCard at the same time?
+			studentIdCardRepository.save(studentIdCard); // saving both student and studentIdCard
 
-			//generateAndSaveRandomStudents(studentRepository);
+			studentIdCardRepository.findById(1L) // this is to see in logs how hibernate did left join
+					.ifPresent(System.out::println); // toString() showing both Student and StudentIdCard data!
+
+
+//			generateAndSaveRandomStudents(studentRepository);
 			// Paging examples. Return 5 students per page example
-			//pagingExamples(studentRepository);
+			pagingExamples(studentRepository);
 
 			// sorting on First Name
-			//sortingExamples(studentRepository);
+//			sortingExamples(studentRepository);
 
 			// Fake Data
 			/*Student maida = new Student("Maida", "Karic", "maida-karic@gmail.com",32);
