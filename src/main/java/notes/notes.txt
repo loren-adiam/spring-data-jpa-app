@@ -11,3 +11,5 @@ boilerplate code required to implement data access layers.
 - OurRepository -> extends JPARepository(jpa methods, flush and batch) -> extends PagingAndSortingRepository -> extends CrudRepository
 
 - Pagination is a feature that allows us to query a large data set without fetching everything at ones from database, but only few results at the time
+
+- One-To-One relationship: Uni (2nd class doesn't map anything back to 1st one), and Bidirectional (both map to one other and loaded at the same time I guess).
