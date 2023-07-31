@@ -30,8 +30,13 @@ public class Main {
 			StudentIdCard studentIdCard = new StudentIdCard("123456789", student);
 			studentIdCardRepository.save(studentIdCard); // saving both student and studentIdCard
 
+			studentRepository.findById(1L) // testing BIDirectional relationship. It will add JOIN to student id card!
+					.ifPresent(System.out::println);
+
 			studentIdCardRepository.findById(1L) // this is to see in logs how hibernate did left join
 					.ifPresent(System.out::println); // toString() showing both Student and StudentIdCard data!
+
+			studentRepository.deleteById(1L); // this will delete both Student and StudentIdCard entities
 
 
 //			generateAndSaveRandomStudents(studentRepository);

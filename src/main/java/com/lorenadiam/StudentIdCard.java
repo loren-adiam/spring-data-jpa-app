@@ -5,11 +5,8 @@ import lombok.*;
 
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
-@Getter
-@Setter
+@Data // includes toString, EqualsAndHashCode, Getter, Setter (non-final fields), RequiredArgsConstructor!
 @NoArgsConstructor
-@AllArgsConstructor
-@ToString
 @Entity(
         name = "StudentIdCard")
 @Table(
@@ -47,10 +44,13 @@ public class StudentIdCard {
     // MERGE (coping the entity to the PersistenceContext)
     // REMOVE (remove entity from db)
     // REFRESH (get entity again from the database)
-    // DETACH (the child will also get removed from the PersistenceContext ;
+    // DETACH (the child will also get removed from the PersistenceContext) ;
+    // We should never set orphanRemoval here since it doesn't make sense to delete "Student" when deleting "StudentIdCard"!
     @JoinColumn(
             name = "student_id", // name of this Foreign KEY column inside student_id_card table
-            referencedColumnName = "id") // this is "id" from Student class
+            referencedColumnName = "id", // this is "id" from Student class
+            foreignKey = @ForeignKey(name = "student_id_fk")) // This is how to modify default foreignKey constraint name!
+
     // This is an actual Foreign KEY property! Not classic Long or Int property as we would expect.
     // It is a Student class field since it connects to that class.
     private Student student;

@@ -1,8 +1,11 @@
 package com.lorenadiam;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+
 import static jakarta.persistence.GenerationType.SEQUENCE;
 
+@Getter
 @Entity(name = "Student") // Default (class name). This annotation is used to map this class to table.
 // Good practice to have "name" specified to have full control. E.g. long class name, but entity name different.
 @Table( // similar to @Column for fields, here we want to take control over table
@@ -54,6 +57,14 @@ public class Student {
     @Column(name = "age", nullable = false)
     private Integer age;
 
+    @OneToOne( // this means when we load the student we also load the card and vice versa. Adding JOINS.
+            mappedBy = "student", // this forms BI-Directional relationship where this "student" is the field found inside StudentIdCard class.
+            orphanRemoval = true // Default: false. When deleting entity with relationship this needs to be set to "true", otherwise it will NOT delete.
+            // When "true" it will delete both owner "Student" and child "StudentIdCard" entities. This should never be set on a child Entity!!!
+            // ***IT DOESN'T MAKE SENSE TO HAVE orphanRemoval set to TRUE on a child (idCard) entity! When deleting "StudentIdCard" "Student" should not be deleted.
+    )
+    private StudentIdCard studentIdCard;
+
     public Student(String firstName, String lastName, String email, Integer age) { // removed "id" since it is generated automatically!
         this.firstName = firstName;
         this.lastName = lastName;
@@ -65,40 +76,20 @@ public class Student {
 
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public void setId(Long id) {
         this.id = id;
-    }
-
-    public String getFirstName() {
-        return firstName;
     }
 
     public void setFirstName(String firstName) {
         this.firstName = firstName;
     }
 
-    public String getLastName() {
-        return lastName;
-    }
-
     public void setLastName(String lastName) {
         this.lastName = lastName;
     }
 
-    public String getEmail() {
-        return email;
-    }
-
     public void setEmail(String email) {
         this.email = email;
-    }
-
-    public Integer getAge() {
-        return age;
     }
 
     public void setAge(Integer age) {
