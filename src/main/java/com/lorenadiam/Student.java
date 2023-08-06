@@ -81,6 +81,17 @@ public class Student {
     )
     private List<Book> books = new ArrayList<>(); // because this is one to many we need a list in student class!
 
+    // this NEW* annotation will automatically create Enrolment table
+    @JoinTable(
+            name = "enrolment",
+            joinColumns = @JoinColumn(
+                    name = "student_id", foreignKey = @ForeignKey(name = "enrolment_student_id_fk")),
+            inverseJoinColumns = @JoinColumn(
+                    name = "course_id", foreignKey = @ForeignKey(name = "enrolment_course_id_fk"))
+    )
+    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Course> courses = new ArrayList<>(); // "mapped by" in Course class
+
     public Student(String firstName, String lastName, String email, Integer age) { // removed "id" since it is generated automatically!
         this.firstName = firstName;
         this.lastName = lastName;
