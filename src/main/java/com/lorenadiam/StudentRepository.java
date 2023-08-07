@@ -9,8 +9,9 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 import java.util.Optional;
 
-// interface doesn't need annotation, but if we would have multiple class implementations they would need @Repository
+// interface doesn't need @Repository annotation, unless we would have multiple class implementations
 public interface StudentRepository extends JpaRepository<Student, Long> {
+
     // This is how we can create custom SQL queries with help of these "methods" (chaining) from Spring Data JPA. findStudentBy + Email
     // We can use annotation @Query to allow us to write "JPQL" (java persistence query language) queries and "NATIVE" queries.
     // We take FULL control of the query (we can also override it). It is best practice to have this always on top of methods!
@@ -33,6 +34,9 @@ public interface StudentRepository extends JpaRepository<Student, Long> {
     @Query(value = "SELECT * FROM student WHERE first_name = :firstName and age >= :age", nativeQuery = true)
     List<Student> testDifferentParamLogic( // Not by order/position anymore. We need to add @Param annotations
             @Param("firstName") String firstName, @Param("age") Integer age);
+
+    // By default, all Query methods are Transactional. We can have @Transactional on interface level too?
+    // When we have @Transactional annotation on method level we are basically doing an override
 
     // Now Deleting or Updating. As I understood these 2 queries can only return integer (rows affected) or void!
     @Transactional // These queries need to be inside a TRANSACTION and that's what this annotation is for!

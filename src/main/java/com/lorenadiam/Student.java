@@ -140,6 +140,7 @@ public class Student {
 
     // getEnrolments() added with Lombok @Data and many other methods
 
+    // NEW SETUP
     public void addEnrolment(Enrolment enrolment){
         if (!enrolments.contains(enrolment)) {
             enrolments.add(enrolment);

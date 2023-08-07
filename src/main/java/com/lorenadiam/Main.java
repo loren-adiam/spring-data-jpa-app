@@ -43,6 +43,7 @@ public class Main {
 					student1, // Here we have student1 as 2nd param. That's why addEnrolment() don't require sync with student!
 					new Course("Computer Science", "IT"),
 					LocalDateTime.now()) );
+
 			student1.addEnrolment(new Enrolment(
 					new EnrolmentId(1L, 2L),
 					student1, // In addBook() Book object doesn't have student object as param. That's why method needs sync with student.
