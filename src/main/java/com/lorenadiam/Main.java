@@ -38,11 +38,19 @@ public class Main {
 			// setting the id card on student1 to be able to save it (card) to db on the next step together with the student!
 			student1.setStudentIdCard(studentIdCard); // only setting studentIdCard, and later to be able to save it
 
-//			student1.enrolToCourse(new Course("Computer Science", "IT"));
-//			student1.enrolToCourse(new Course("Spring Data JPA", "IT"));
+			student1.addEnrolment(new Enrolment(
+					new EnrolmentId(1L, 1L), // right now we are manually passing ids.
+					student1, // Here we have student1 as 2nd param. That's why addEnrolment() don't require sync with student!
+					new Course("Computer Science", "IT"),
+					LocalDateTime.now()) );
+			student1.addEnrolment(new Enrolment(
+					new EnrolmentId(1L, 2L),
+					student1, // In addBook() Book object doesn't have student object as param. That's why method needs sync with student.
+					new Course("Spring Data JPA", "IT"),
+					LocalDateTime.now()) );
 
 			studentRepository.save(student1); // saving student, also studentIdCard and now Books too!
-			// We are basically creating & saving all the data through the student object. Beside the actual student, we also set card and books.
+			// We are basically creating & saving all data through student object. Beside actual student, we also set card and books.
 
 			studentRepository.findById(1L) // testing BIDirectional relationship. It will add JOIN to student id card!
 					.ifPresent(s -> { // Student Card is loaded automatically since FetchType is EAGER for 121.

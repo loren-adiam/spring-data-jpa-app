@@ -81,7 +81,7 @@ public class Student {
     )
     private List<Book> books = new ArrayList<>(); // because this is one to many we need a list in student class!
 
-    // Old setup where link table was created automatically.
+    // Old setup where link table was created automatically. We only have keys properties, we can't add more this way! (e.g. createdAt)
     /*@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
     @JoinTable( // this NEW* annotation will automatically create Enrolment LINK table
             name = "enrolment",
