@@ -2,7 +2,6 @@ package com.lorenadiam;
 
 import jakarta.persistence.*;
 import lombok.*;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Data
@@ -44,7 +43,7 @@ public class Book {
             foreignKey = @ForeignKey(name = "student_book_fk"))
     private Student student; // **this student
 
-    public Book(String bookName, LocalDateTime createdAt, Student student) {
+    public Book(String bookName, LocalDateTime createdAt, Student student) { // This constructor don't require sync when adding book!
         this.bookName = bookName;
         this.createdAt = createdAt;
         this.student = student;

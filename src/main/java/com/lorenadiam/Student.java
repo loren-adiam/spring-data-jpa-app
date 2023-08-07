@@ -69,7 +69,7 @@ public class Student {
             cascade = {CascadeType.PERSIST, CascadeType.REMOVE} // Added the same CascadeType logic like below from "OneToMany"
             // It was actually needed to not get error: save the instance before flushing
     )
-    private StudentIdCard studentIdCard;
+    private StudentIdCard studentIdCard; // BI_D, the only reason we have this is to be able to save it together with student I guess. If not exists we could save card separately.
 
     @OneToMany( // this is Bi-directional relationship
             mappedBy = "student", // **student object from Book class
@@ -81,6 +81,21 @@ public class Student {
     )
     private List<Book> books = new ArrayList<>(); // because this is one to many we need a list in student class!
 
+    // Old setup where link table was created automatically. We only have keys properties, we can't add more this way! (e.g. createdAt)
+    /*@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinTable( // this NEW* annotation will automatically create Enrolment LINK table
+            name = "enrolment",
+            joinColumns = @JoinColumn(
+                    name = "student_id", foreignKey = @ForeignKey(name = "enrolment_student_id_fk")),
+            inverseJoinColumns = @JoinColumn(
+                    name = "course_id", foreignKey = @ForeignKey(name = "enrolment_course_id_fk"))
+    )
+    private List<Course> courses = new ArrayList<>(); // "mapped by" in Course class*/
+
+    // New setup where we are manually connecting to the link table. Now we have our own Enrolment class/entity!
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "student")
+    List<Enrolment> enrolments = new ArrayList<>();
+
     public Student(String firstName, String lastName, String email, Integer age) { // removed "id" since it is generated automatically!
         this.firstName = firstName;
         this.lastName = lastName;
@@ -88,17 +103,19 @@ public class Student {
         this.age = age;
     }
 
-    // because this is Bi-directional with Book we need to add few methods here
+
+    // because this is Bi-directional with Book we need to add few methods here. Adding Books through Student object requires sync with it.
     public void addBook(Book book) {
         if (!this.books.contains(book)) { // if books list doesn't contain book we can add it
             this.books.add(book);
             // Bidirectional, both ways needs to be in sync!
             book.setStudent(this); // In "Student" we add a Book, and in other side (Book class) we also set the "Student" back...
             // When we load the book we want to load the Students, and when we load the Student we also want to load associated Books.
-            // setter from Book class. Is this setter kind of connecting this current Book to this current Student object?
+            // Setter from Book class. It is kind of connecting this current Book to this current Student object.
+            // Since we are not using Book constructor which has Student as param (then this not needed), we need to set this student here, otherwise
+            // it doesn't know which student has this book and when trying to save student object we will get an ERROR!
         }
     }
-
     public void removeBook(Book book) {
         if (this.books.contains(book)) {
             this.books.remove(book);
@@ -109,5 +126,28 @@ public class Student {
     public void setStudentIdCard(StudentIdCard studentIdCard) {
         this.studentIdCard = studentIdCard;
     }
+
+    // OLD SETUP. Necessary methods for Courses which will be called on Student object
+    /*public void enrolToCourse(Course course) {
+        courses.add(course);
+        course.getStudents().add(this);
+    }
+
+    public void unEnrolToCourse(Course course) {
+        courses.remove(course);
+        course.getStudents().remove(this);
+    }*/
+
+    // getEnrolments() added with Lombok @Data and many other methods
+
+    public void addEnrolment(Enrolment enrolment){
+        if (!enrolments.contains(enrolment)) {
+            enrolments.add(enrolment);
+        }
+    }
+    public void removeEnrolment(Enrolment enrolment){
+        enrolments.remove(enrolment);
+    }
+
 
 }

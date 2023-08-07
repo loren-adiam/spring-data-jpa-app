@@ -55,7 +55,7 @@ public class StudentIdCard {
     // It is a Student class field since it connects to that class.
     private Student student;
 
-    public StudentIdCard(String cardNumber, Student student) { // constructor without "id"
+    public StudentIdCard(String cardNumber, Student student) { // constructor with Student object and without "id"
         this.cardNumber = cardNumber;
         this.student = student;
     }

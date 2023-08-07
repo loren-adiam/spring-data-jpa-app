@@ -26,22 +26,37 @@ public class Main {
 
 		return args -> {
 
-			Student student = generateStudent(studentRepository); // not saving only generating
+			Student student1 = generateStudent(studentRepository); // not saving only generating
 
-			StudentIdCard studentIdCard = new StudentIdCard("123456789", student);
+			StudentIdCard studentIdCard = new StudentIdCard("123456789", student1);
 
-			student.addBook(new Book("Clean code", LocalDateTime.now().minusDays(4)));
-			student.addBook(new Book("Think and Grow Rich", LocalDateTime.now()));
-			student.addBook(new Book("Spring Data JPA", LocalDateTime.now().minusYears(1)));
+			// adding books through Student constructor which will be saved later too. addBook() is syncing the Student class too!
+			student1.addBook(new Book("Clean code", LocalDateTime.now().minusDays(4)));
+			student1.addBook(new Book("Think and Grow Rich", LocalDateTime.now()));
+			student1.addBook(new Book("Spring Data JPA", LocalDateTime.now().minusYears(1)));
 
-			student.setStudentIdCard(studentIdCard); // only setting studentIdCard, and later to be able to save it
+			// setting the id card on student1 to be able to save it (card) to db on the next step together with the student!
+			student1.setStudentIdCard(studentIdCard); // only setting studentIdCard, and later to be able to save it
 
-			studentRepository.save(student); // saving student, also studentIdCard and now Books too!
+			student1.addEnrolment(new Enrolment(
+					new EnrolmentId(1L, 1L), // right now we are manually passing ids.
+					student1, // Here we have student1 as 2nd param. That's why addEnrolment() don't require sync with student!
+					new Course("Computer Science", "IT"),
+					LocalDateTime.now()) );
+			student1.addEnrolment(new Enrolment(
+					new EnrolmentId(1L, 2L),
+					student1, // In addBook() Book object doesn't have student object as param. That's why method needs sync with student.
+					new Course("Spring Data JPA", "IT"),
+					LocalDateTime.now()) );
+
+			studentRepository.save(student1); // saving student, also studentIdCard and now Books too!
+			// We are basically creating & saving all data through student object. Beside actual student, we also set card and books.
 
 			studentRepository.findById(1L) // testing BIDirectional relationship. It will add JOIN to student id card!
 					.ifPresent(s -> { // Student Card is loaded automatically since FetchType is EAGER for 121.
 						System.out.println("Fetch book lazy..."); // Books not loaded since FetchType is LAZY for 12M/M21!
-						List<Book> books = student.getBooks();// This is how we force it to load the Books too from db!
+
+						List<Book> books = student1.getBooks();// This is how we force it to load the Books too from db!
 						books.forEach(book -> { // or we put FetchType to EAGER.
 							System.out.println(s.getFirstName() + " borrowed " + book.getBookName());
 						});
