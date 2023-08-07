@@ -45,8 +45,21 @@ public class Course {
         this.department = department;
     }
 
-    @ManyToMany(mappedBy = "courses")
-    private List<Student> students = new ArrayList<>();
 
+    // Old setup
+    /*@ManyToMany(mappedBy = "courses")
+    private List<Student> students = new ArrayList<>();*/
 
+    // New setup. Same as in Student class. COPY, PASTE
+    @OneToMany(mappedBy = "course", cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    private List<Enrolment> enrolments = new ArrayList<>();
+
+    public void addEnrolment(Enrolment enrolment){
+        if (!enrolments.contains(enrolment)) {
+            enrolments.add(enrolment);
+        }
+    }
+    public void removeEnrolment(Enrolment enrolment){
+        enrolments.remove(enrolment);
+    }
 }

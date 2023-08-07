@@ -38,6 +38,9 @@ public class Main {
 			// setting the id card on student1 to be able to save it (card) to db on the next step together with the student!
 			student1.setStudentIdCard(studentIdCard); // only setting studentIdCard, and later to be able to save it
 
+//			student1.enrolToCourse(new Course("Computer Science", "IT"));
+//			student1.enrolToCourse(new Course("Spring Data JPA", "IT"));
+
 			studentRepository.save(student1); // saving student, also studentIdCard and now Books too!
 			// We are basically creating & saving all the data through the student object. Beside the actual student, we also set card and books.
 

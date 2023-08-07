@@ -81,16 +81,20 @@ public class Student {
     )
     private List<Book> books = new ArrayList<>(); // because this is one to many we need a list in student class!
 
-    // this NEW* annotation will automatically create Enrolment table
-    @JoinTable(
+    // Old setup where link table was created automatically.
+    /*@ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
+    @JoinTable( // this NEW* annotation will automatically create Enrolment LINK table
             name = "enrolment",
             joinColumns = @JoinColumn(
                     name = "student_id", foreignKey = @ForeignKey(name = "enrolment_student_id_fk")),
             inverseJoinColumns = @JoinColumn(
                     name = "course_id", foreignKey = @ForeignKey(name = "enrolment_course_id_fk"))
     )
-    @ManyToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE})
-    private List<Course> courses = new ArrayList<>(); // "mapped by" in Course class
+    private List<Course> courses = new ArrayList<>(); // "mapped by" in Course class*/
+
+    // New setup where we are manually connecting to the link table. Now we have our own Enrolment class/entity!
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.REMOVE}, mappedBy = "student")
+    List<Enrolment> enrolments = new ArrayList<>();
 
     public Student(String firstName, String lastName, String email, Integer age) { // removed "id" since it is generated automatically!
         this.firstName = firstName;
@@ -111,7 +115,6 @@ public class Student {
             // it doesn't know which student has this book and when trying to save student object we will get an ERROR!
         }
     }
-
     public void removeBook(Book book) {
         if (this.books.contains(book)) {
             this.books.remove(book);
@@ -121,6 +124,28 @@ public class Student {
     // we added this to be able to set StudentIdCard from Student object, and we later do save on the Student
     public void setStudentIdCard(StudentIdCard studentIdCard) {
         this.studentIdCard = studentIdCard;
+    }
+
+    // OLD SETUP. Necessary methods for Courses which will be called on Student object
+    /*public void enrolToCourse(Course course) {
+        courses.add(course);
+        course.getStudents().add(this);
+    }
+
+    public void unEnrolToCourse(Course course) {
+        courses.remove(course);
+        course.getStudents().remove(this);
+    }*/
+
+    // getEnrolments() added with Lombok @Data and many other methods
+
+    public void addEnrolment(Enrolment enrolment){
+        if (!enrolments.contains(enrolment)) {
+            enrolments.add(enrolment);
+        }
+    }
+    public void removeEnrolment(Enrolment enrolment){
+        enrolments.remove(enrolment);
     }
 
 
