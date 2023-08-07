@@ -55,6 +55,7 @@ public class Main {
 			studentRepository.findById(1L) // testing BIDirectional relationship. It will add JOIN to student id card!
 					.ifPresent(s -> { // Student Card is loaded automatically since FetchType is EAGER for 121.
 						System.out.println("Fetch book lazy..."); // Books not loaded since FetchType is LAZY for 12M/M21!
+
 						List<Book> books = student1.getBooks();// This is how we force it to load the Books too from db!
 						books.forEach(book -> { // or we put FetchType to EAGER.
 							System.out.println(s.getFirstName() + " borrowed " + book.getBookName());
